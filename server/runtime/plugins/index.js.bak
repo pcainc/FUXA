@@ -25,7 +25,6 @@ plugins['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.
 plugins['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8');
 // plugins['influxdb-client'] = new Plugin('@influxdata/influxdb-client', '../storage/influxdb', 'influxDB', '1.25.0', true);
 // plugins['onoff'] = new Plugin('onoff', './raspy', 'Raspberry', '6.0.1');
-plugins['st-ethernet-ip'] = new Plugin('st-ethernet-ip', './genericethernetip', 'GenericEthernetIP', '2.7.2', true);
 
 /**
  * Init plugin resource
