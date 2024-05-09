@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Subject, takeUntil } from 'rxjs';
 
-import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType, ServerTagType, EnipTagDataSourceType, EnipIODataType, EnipTagOptions, EthernetIPModule } from './../../_models/device';
+import { Device, TagType, Tag, DeviceType, ModbusTagType, BACnetObjectType, ServerTagType } from './../../_models/device';
 import { TreetableComponent, Node, NodeType } from '../../gui-helpers/treetable/treetable.component';
 import { HmiService } from '../../_services/hmi.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -22,11 +22,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 	dialogType = EditTagDialogType.Standard;
     config = { width: '100%', height: '600px', type: '' };
     memAddress = {'Coil Status (Read/Write 000001-065536)': '000000', 'Digital Inputs (Read 100001-165536)': '100000', 'Input Registers (Read  300001-365536)': '300000', 'Holding Registers (Read/Write  400001-465535)': '400000'};
-    enipTagDataSourceType = [ { text: 'device.tag-enipType-symbolic', value: EnipTagDataSourceType.symbolic }, { text: 'device.tag-enipType-explicit', value: EnipTagDataSourceType.explicit },
-                        { text: 'device.tag-enipType-io', value: EnipTagDataSourceType.assemblyIO }, { text: 'device.tag-enipType-calculated', value: EnipTagDataSourceType.calculated }];
-    enipIODataType = [{ text: 'device.tag-enip-io-type-bit', value: EnipIODataType.bit }, { text: 'device.tag-enip-io-type-integer16', value: EnipIODataType.integer16 }];
-    enipIOReadOrWriteType = [{ text: 'device.tag-enip-io-output-read', value: false }, { text: 'device.tag-enip-io-output-write', value: true }];
-
     private destroy$ = new Subject<void>();
 
     @ViewChild(TreetableComponent, {static: false}) treetable: TreetableComponent;
@@ -108,25 +103,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             }
             this.queryNext(null);
         }
-        for (let i = 0; i < this.enipTagDataSourceType.length; i++) {
-            this.translateService.get(this.enipTagDataSourceType[i].text).subscribe((txt: string) => { this.enipTagDataSourceType[i].text = txt; });
-        }
-        for (let i = 0; i < this.enipIODataType.length; i++) {
-            this.translateService.get(this.enipIODataType[i].text).subscribe((txt: string) => { this.enipIODataType[i].text = txt; });
-        }
-        for (let i = 0; i < this.enipIOReadOrWriteType.length; i++) {
-            this.translateService.get(this.enipIOReadOrWriteType[i].text).subscribe((txt: string) => { this.enipIOReadOrWriteType[i].text = txt; });
-        }
-        if (this.isGenericEthernetIp()) {
-            if (this.data.tag.enipOptions === undefined) {
-                this.data.tag.enipOptions = {explicitOpt: {}, implicitOpt:{}, ioOpt: {ioType: EnipIODataType.bit,
-                    ioOutput: false,}};
-            } else if (this.data.tag.enipOptions.ioOpt === undefined) {
-                this.data.tag.enipOptions.ioOpt = {ioType: EnipIODataType.bit,
-                    ioOutput: false,};
-            }
-            const enipOpt = this.data.tag.enipOptions as EnipTagOptions;
-        }
     }
 
     ngOnDestroy() {
@@ -152,7 +128,7 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
                 }
             });
             // this.data.nodes = result;
-        } else if (this.isModbus() || this.isEthernetIp() || this.isGenericEthernetIp()) {
+        } else if (this.isModbus() || this.isEthernetIp()) {
         } else if (this.isInternal() || this.isServer()) {
             let tags = <Tag[]>Object.values(this.data.device.tags);
             this.error = '';
@@ -383,22 +359,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
 		return (this.data.device.type === DeviceType.EthernetIP) ? true : false;
     }
 
-    isGenericEthernetIp() {
-		return (this.data.device.type === DeviceType.GenericEthernetIP) ? true : false;
-    }
-    isEnIpSymbolic() {
-        return (this.isGenericEthernetIp() && (this.data.tag.enipOptions?.tagType === EnipTagDataSourceType.symbolic )) ? true : false;
-    }
-    isEnIpExplicit() {
-        return (this.isGenericEthernetIp() && (this.data.tag.enipOptions?.tagType === EnipTagDataSourceType.explicit )) ? true : false;
-    }
-    isEnIpIO() {
-        return (this.isGenericEthernetIp() && (this.data.tag.enipOptions?.tagType === EnipTagDataSourceType.assemblyIO )) ? true : false;
-    }
-    isEnIpIOTypeBit() {
-        return (this.isGenericEthernetIp() && (this.data.tag?.enipOptions?.ioOpt?.ioType === EnipIODataType.bit )) ? true : false;
-    }
-
     isServer() {
 		return (this.data.device.type === DeviceType.FuxaServer) ? true : false;
     }
@@ -426,9 +386,6 @@ export class TagPropertyComponent implements OnInit, OnDestroy {
             return false;
         }
         return true;
-    }
-    ethernetIpModules(): EthernetIPModule[] {
-        return <EthernetIPModule[]>Object.values(this.data.device.modules);
     }
 }
 

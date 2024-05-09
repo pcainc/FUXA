@@ -304,6 +304,13 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
             });
             return;
         }
+        if (this.deviceSelected.type === DeviceType.GenericEthernetIP) {
+            this.tagPropertyService.editTagPropertyEnIP(this.deviceSelected, tag, checkToAdd).subscribe(result => {
+                this.tagsMap[tag.id] = tag;
+                this.bindToTable(this.deviceSelected.tags);
+            });
+            return;
+        }
         let oldtag = tag.id;
         let temptag: Tag = JSON.parse(JSON.stringify(tag));
         let dialogRef = this.dialog.open(TagPropertyComponent, {
@@ -325,7 +332,7 @@ export class DeviceListComponent implements OnInit, AfterViewInit {
                     tag.address = temptag.address;
                     tag.memaddress = temptag.memaddress;
                     tag.divisor = temptag.divisor;
-tag.enipOptions = temptag.enipOptions;
+                    tag.enipOptions = temptag.enipOptions;
                     if (this.deviceSelected.type === DeviceType.internal) {
                         tag.value = '0';
                     }
