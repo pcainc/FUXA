@@ -277,7 +277,11 @@ function Device(data, runtime) {
                     reject(err);
                 });
             } else if (data.type === DeviceEnum.GenericEthernetIP) {
-                // FIXME
+                comm.browse(path, callback).then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
             }else {
                 reject('Browse not supported!');
             }
