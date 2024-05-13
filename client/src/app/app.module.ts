@@ -186,6 +186,7 @@ import { TagPropertyEditS7Component } from './device/tag-property/tag-property-e
 import { TagPropertyEditServerComponent } from './device/tag-property/tag-property-edit-server/tag-property-edit-server.component';
 import { TagPropertyEditModbusComponent } from './device/tag-property/tag-property-edit-modbus/tag-property-edit-modbus.component';
 import { TagPropertyEditEnipComponent } from './device/tag-property/tag-property-edit-enip/tag-property-edit-enip.component';
+import { EnumKeyValuePipe } from './gui-helpers/enumKeyPipe/enum-key-value.pipe';
 
 export function createTranslateLoader(http: HttpClient) {
     return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -337,7 +338,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         PanelComponent,
         PanelPropertyComponent,
         WebcamPlayerComponent,
-        WebcamPlayerDialogComponent
+        WebcamPlayerDialogComponent,
+        EnumKeyValuePipe
     ],
     imports: [
         BrowserModule,
