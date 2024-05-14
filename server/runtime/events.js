@@ -21,6 +21,7 @@ const IoEventTypes = {
     ALARMS_STATUS: 'alarms-status',
     HOST_INTERFACES: 'host-interfaces',
     SCRIPT_CONSOLE: 'script-console',
+    DEVICE_BROWSE_FOR_DEVICES: 'device-find-devices',
 }
 
 // module.exports = IoEventTypes;
