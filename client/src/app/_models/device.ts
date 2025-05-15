@@ -30,9 +30,12 @@ export class Device {
     polling: number;
     /** Tags list of Tag */
     tags: DictionaryTag;
+    /** Memory IO Modules for Ethernet/IP: list {} of type EthernetIPModule indexed by id */
+    modules: any;
 
     constructor(_id: string) {
         this.id = _id;
+        this.modules = {};
     }
 
     static descriptor = {
@@ -49,7 +52,78 @@ export class Device {
         return device.type === DeviceType.WebAPI && device.property.getTags;
     }
 }
+export enum EnipTypes {
+    BOOL = 0xc1,
+    SINT = 0xc2,
+    INT = 0xc3,
+    DINT = 0xc4,
+    LINT = 0xc5,
+    USINT = 0xc6,
+    UINT = 0xc7,
+    UDINT = 0xc8,
+    REAL = 0xca,
+    LREAL = 0xcb,
+    STIME = 0xcc,
+    DATE = 0xcd,
+    TIME_AND_DAY = 0xce,
+    DATE_AND_STRING = 0xcf,
+    STRING = 0xd0,
+    WORD = 0xd1,
+    DWORD = 0xd2,
+    BIT_STRING = 0xd3,
+    LWORD = 0xd4,
+    STRING2 = 0xd5,
+    FTIME = 0xd6,
+    LTIME = 0xd7,
+    ITIME = 0xd8,
+    STRINGN = 0xd9,
+    SHORT_STRING = 0xda,
+    TIME = 0xdb,
+    EPATH = 0xdc,
+    ENGUNIT = 0xdd,
+    STRINGI = 0xde,
+    STRUCT = 0x02a0
+};
 
+// const EnipTypeSizes = {
+//     0xc1: 1,
+//     0xc2: 1,
+//     0xc3: 2,
+//     0xc4: 4,
+//     0xc5: 8,
+//     0xc6: 1,
+//     0xc7: 2,
+//     0xc8: 4,
+//     0xca: 4,
+// }
+export class EnipTagOptions {
+    tagType: EnipTagDataSourceType;
+    explicitOpt: {
+        class: number;
+        instance: number;
+        attribute: number;
+        /** is this a read or write message? (getAttributeSingle vs setAttributeSingle)
+         * true - getAttributeSingle
+         * false - setAttributeSingle
+         */
+        getOrSend: boolean;
+        /** for getAttributeSingle, optional array of bytes (hex) to include that
+         * the device requires to identify the requested tag */
+        sendBuffer: string;
+    };
+     symbolicOpt: {
+        // name: string; use address field in tag object
+        program: string;
+        dataType: EnipTypes;
+     };
+     ioOpt: {
+        ioModuleId: string;
+        ioType: EnipIODataType;
+        ioByteOffset: number; /** byte offset to read/set for ioType of integer16, byte offset to start read/set for bitoffset */
+        ioBitOffset: number; /** 0-7, for ioType bit */
+        ioOutput: boolean; /** if true tag is used to send data, if false (default) tag is for read of input table */
+     };
+ };
 interface DictionaryTag {
     [id: string]: Tag;
 }
@@ -95,6 +169,7 @@ export class Tag {
     sysType: TagSystemType;
     /** Description */
     description?: string;
+    enipOptions: EnipTagOptions;
     /** Deadband to set changed value */
     deadband?: TagDeadband;
     /**
@@ -126,6 +201,7 @@ export class Tag {
         format: 'Number of digits to appear after the decimal point',
         direction: 'A string specifying whether the GPIO should be configured as an input or output. The valid values are: \'in\', \'out\', \'high\', and \'low\'. If \'out\' is specified the GPIO will be configured as an output and the value of the GPIO will be set to 0. \'high\' and \'low\' are variants of \'out\' that configure the GPIO as an output with an initial level of 1 or 0 respectively.',
         edge: 'An optional string specifying the interrupt generating edge or edges for an input GPIO. The valid values are: \'none\', \'rising\', \'falling\' or \'both\'. The default value is \'none\' indicating that the GPIO will not generate interrupts. Whether or not interrupts are supported by an input GPIO is GPIO specific. If interrupts are not supported by a GPIO the edge argument should not be specified. The edge argument is ignored for output GPIOs.',
+        enipOptions: 'EthernetIP options, JSON object.  { tagType: "symbolic|explicit|assembly", symbolPath: string, explClass: number, explInstance: number, explAttr: number',
     };
 }
 
@@ -226,7 +302,35 @@ export class DeviceSecurity {
     privateKeyFileName: string;
     caCertificateFileName: string;
 }
+/** Used to hold the configuration for EthernetIP IO Module */
+export class EthernetIPModule {
+    /** module id guid */
+    id: string;
+    /** module name */
+    name: string;
+    /** description */
+    description: string;
+    /** request packet interval */
+    rpi: number;
+    /** input instance number */
+    inputInstance: number;
+    /** input instance size in bytes */
+    inputSize: number;
+    /** output instance number */
+    outputInstance: number;
+    /** output instance size in bytes */
+    outputSize: number;
+    /** configuration instance number */
+    configurationInstance: number;
+    /** configuration instance size in bytes */
+    configurationSize: number;
+    /** configuration data, hex encoded bytes */
+    configurationData: string;
 
+    constructor(_id: string) {
+        this.id = _id;
+    }
+}
 export enum DeviceType {
     FuxaServer = 'FuxaServer',
     SiemensS7 = 'SiemensS7',
@@ -239,6 +343,7 @@ export enum DeviceType {
     internal = 'internal',
     EthernetIP = 'EthernetIP',
     ODBC = 'ODBC',
+    GenericEthernetIP = 'GenericEthernetIP',
     GPIO = 'GPIO',
     // Template: 'template'
 }
@@ -251,6 +356,17 @@ export enum TagType {
     DInt = 'DInt',
     DWord = 'DWord',
     Real = 'Real'
+}
+
+export enum EnipTagDataSourceType {
+    symbolic,
+    explicit,
+    assemblyIO,
+}
+
+export enum EnipIODataType {
+    bit,
+    integer16
 }
 
 export enum ModbusTagType {
@@ -376,6 +492,7 @@ export enum BACnetObjectType {
 
 export const DEVICE_PREFIX = 'd_';
 export const TAG_PREFIX = 't_';
+export const ETHERNETIPMODULE_PREFIX = 'm_';
 
 export class DevicesUtils {
     static getDeviceTagText(devices: Device[], id: string): string {

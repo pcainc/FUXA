@@ -31,6 +31,7 @@ plugins['nodepccc'] = new Plugin('nodepccc', './ethernetip', 'EthernetIP', '0.1.
 plugins['odbc'] = new Plugin('odbc', './odbc', 'ODBC', '2.4.8', PluginGroupType.connectionDatabase);
 // plugins['influxdb-client'] = new Plugin('@influxdata/influxdb-client', '../storage/influxdb', 'influxDB', '1.25.0', true);
 // plugins['onoff'] = new Plugin('onoff', './raspy', 'Raspberry', '6.0.1');
+plugins['st-ethernet-ip'] = new Plugin('st-ethernet-ip', './genericethernetip', 'GenericEthernetIP', '2.7.2', true);
 plugins['chart.js'] = new Plugin('chart.js', './chartjs', 'Chart', '2.9.4', PluginGroupType.chartReport);
 plugins['chartjs-node-canvas'] = new Plugin('chartjs-node-canvas', 'chartjs-canvas', 'Chart', '3.2.0', PluginGroupType.chartReport);
 plugins['onoff'] = new Plugin('onoff', './onoff', 'GPIO', '6.0.3', PluginGroupType.connectionDevice);

@@ -7,6 +7,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './material.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ColorPickerModule } from 'ngx-color-picker';
+import {MatTreeModule} from '@angular/material/tree';
 
 import { ToastrModule } from 'ngx-toastr';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
@@ -49,6 +50,8 @@ import { DevicePropertyComponent } from './device/device-property/device-propert
 import { TagOptionsComponent } from './device/tag-options/tag-options.component';
 import { TopicPropertyComponent } from './device/topic-property/topic-property.component';
 import { DeviceListComponent } from './device/device-list/device-list.component';
+import { DeviceEnipmoduleComponent } from './device/device-enipmodule/device-enipmodule.component';
+import { DeviceEnipselectdeviceComponent } from './device/device-enipselectdevice/device-enipselectdevice.component';
 import { DeviceMapComponent } from './device/device-map/device-map.component';
 import { FuxaViewComponent } from './fuxa-view/fuxa-view.component';
 import { CardsViewComponent } from './cards-view/cards-view.component';
@@ -181,6 +184,8 @@ import { ScriptEditorParamComponent } from './scripts/script-editor/script-edito
 import { TagPropertyEditS7Component } from './device/tag-property/tag-property-edit-s7/tag-property-edit-s7.component';
 import { TagPropertyEditServerComponent } from './device/tag-property/tag-property-edit-server/tag-property-edit-server.component';
 import { TagPropertyEditModbusComponent } from './device/tag-property/tag-property-edit-modbus/tag-property-edit-modbus.component';
+import { TagPropertyEditEnipComponent } from './device/tag-property/tag-property-edit-enip/tag-property-edit-enip.component';
+import { EnumKeyValuePipe } from './gui-helpers/enumKeyPipe/enum-key-value.pipe';
 import { TagPropertyEditInternalComponent } from './device/tag-property/tag-property-edit-internal/tag-property-edit-internal.component';
 import { TagPropertyEditOpcuaComponent } from './device/tag-property/tag-property-edit-opcua/tag-property-edit-opcua.component';
 import { TagPropertyEditBacnetComponent } from './device/tag-property/tag-property-edit-bacnet/tag-property-edit-bacnet.component';
@@ -242,6 +247,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TagPropertyEditS7Component,
         TagPropertyEditServerComponent,
         TagPropertyEditModbusComponent,
+        TagPropertyEditEnipComponent,
         TagPropertyEditInternalComponent,
         TagPropertyEditOpcuaComponent,
         TagPropertyEditBacnetComponent,
@@ -252,6 +258,8 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         TopicPropertyComponent,
         DevicePropertyComponent,
         DeviceWebapiPropertyDialogComponent,
+        DeviceEnipmoduleComponent,
+        DeviceEnipselectdeviceComponent,
         LayoutPropertyComponent,
         TagsIdsConfigComponent,
         PluginsComponent,
@@ -375,6 +383,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         PanelPropertyComponent,
         WebcamPlayerComponent,
         WebcamPlayerDialogComponent,
+        EnumKeyValuePipe,
         ResizeDirective,
         EditorViewsListComponent,
         MapsLocationListComponent,
@@ -394,6 +403,7 @@ export const myCustomTooltipDefaults: MatTooltipDefaultOptions = {
         HttpClientModule,
         routing,
         MaterialModule,
+        MatTreeModule,
         BrowserAnimationsModule,
         ColorPickerModule,
         AngularDraggableModule,

@@ -12,6 +12,7 @@ var MQTTclient = require('./mqtt');
 var EthernetIPclient = require('./ethernetip');
 var FuxaServer = require('./fuxaserver');
 var ODBCclient = require('./odbc');
+var GenericEthernetIPclient = require('./genericethernetip');
 // var TEMPLATEclient = require('./template');
 var GpioClient = require('./gpio');
 
@@ -89,7 +90,12 @@ function Device(data, runtime) {
             return null;
         }
         comm = ODBCclient.create(data, logger, events, manager);
-    }
+    } else if (data.type === DeviceEnum.GenericEthernetIP) {
+        if (!GenericEthernetIPclient) {
+            return null;
+        }
+        comm = GenericEthernetIPclient.create(data, logger, events, manager); 
+    } 
     else if (data.type === DeviceEnum.GPIO) {
         if (!GpioClient) {
             return null;
@@ -282,12 +288,32 @@ function Device(data, runtime) {
                 }).catch(function (err) {
                     reject(err);
                 });
-            } else {
+            } else if (data.type === DeviceEnum.GenericEthernetIP) {
+                comm.browse(path, callback).then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
+            }else {
                 reject('Browse not supported!');
             }
         });
     }
 
+    /** look for devices of the same type on the network */
+    this.browseForDevices = function (path, callback) {
+        return new Promise(function (resolve, reject) {
+            if (data.type === DeviceEnum.GenericEthernetIP) {
+                comm.browseForDevices(path, callback).then(function (result) {
+                    resolve(result);
+                }).catch(function (err) {
+                    reject(err);
+                });
+            }else {
+                reject('Browse for devices not supported!');
+            }
+        });
+    }
     /**
      * Call Device to return Tag/Node attribute (only OPCUA)
      */
@@ -496,6 +522,8 @@ function loadPlugin(type, module) {
         FuxaServer = require(module);
     } else if (type === DeviceEnum.ODBC) {
         ODBCclient = require(module);
+    } else if (type === DeviceEnum.GenericEthernetIP) {
+        GenericEthernetIPclient = require(module);
     }else if (type === DeviceEnum.GPIO) {
         GpioClient = require(module);
     }
@@ -534,6 +562,7 @@ var DeviceEnum = {
     EthernetIP: 'EthernetIP',
     FuxaServer: 'FuxaServer',
     ODBC: 'ODBC',
+    GenericEthernetIP: 'GenericEthernetIP',
     GPIO: 'GPIO',
     // Template: 'template'
 }
