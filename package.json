@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "st-ethernet-ip": "st-ethernet-ip"
+    "st-ethernet-ip": "2.7.5"
   }
 }
