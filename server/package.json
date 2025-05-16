@@ -45,13 +45,15 @@
     "odbc": "2.4.9",
     "pdfmake": "0.2.5",
     "socket.io": "2.5.0",
-    "sqlite3": "5.1.5",
+    "sqlite3": "^5.1.7",
     "st-ethernet-ip": "2.7.5",
     "winston": "3.7.2",
-    "ws": "8.18.0"
+    "ws": "8.18.0",
+    "lru-cache": "^7.18.3",
+    "semver": "^7.6.3"
   },
   "devDependencies": {
-    "@mapbox/node-pre-gyp": "^1.0.0",
+    "@mapbox/node-pre-gyp": "^1.0.11",
     "@types/express": "5.0.0",
     "chai": "^5.1.2",
     "mocha": "^10.8.2",
